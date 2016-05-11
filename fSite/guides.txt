@@ -8,4 +8,4 @@ http://javascriptissexy.com/16-javascript-concepts-you-must-know-well/
 
 
 
-Codewars.com
+My next line of attack is : Codewars.com
