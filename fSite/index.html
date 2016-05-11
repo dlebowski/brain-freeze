@@ -1,0 +1,269 @@
+<html ng-app>
+    <meta name="viewport" content="user-scalable=1, initial-scale=1.0"/>
+    <style>
+		#loader {
+			position: absolute;
+			left: 50%;
+			right: 50%;
+			z-index: 1;
+			margin: auto;
+			border: 16px solid #f3f3f3; /* Light grey */
+			border-top: 16px solid #3498db; /* Blue */
+			/*border-bottom: 16px solid salmon;  Blue */
+			border-radius: 50%;
+			width: 30px;
+			height: 30px;
+			animation: spin 1s linear infinite;
+			-webkit-animation: spin 1s linear infinite;
+		}
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+		@-webkit-keyframes spin {
+			0% { -webkit-transform: rotate(0deg); }
+			100% { -webkit-transform: rotate(360deg); }
+		}
+		
+		/* Add animation to "page content" */
+			.animate-bottom {
+			position: relative;
+			-webkit-animation-name: animatebottom;
+			-webkit-animation-duration: 1s;
+			animation-name: animatebottom;
+			animation-duration: 1s
+		}
+		@keyframes animatebottom { 
+			from{ bottom:-100px; opacity:0 } 
+			to{ bottom:0; opacity:1 }
+		}
+		@-webkit-@keyframes animatebottom { 
+			from{ bottom:-100px; opacity:0 } 
+			to{ bottom:0; opacity:1 }
+		}
+		#myProgress {
+			position: relative;
+			width: 100%;
+			height: 30px;
+			background-color: grey;
+		}
+		#myBar {
+			position: absolute;
+			width: 1%;
+			height: 100%;
+			background-color: green;
+		}
+		#label {
+			text-align: center;
+			color: white;
+			line-height: 30px;
+		}
+		progress {
+			background-color: salmon;
+			height: 18px;
+			border-radius: 9px;
+			border: 0;
+		}
+		progress::-webkit-progress-bar {
+			background-color: salmon;
+			height: 18px;
+			border-radius: 9px;
+			border: 0;
+		}
+		progress::-webkit-progress-value {
+			background-color: salmon;
+			height: 18px;
+			border-radius: 9px;
+			border: 0;
+		}
+		
+    </style>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+	<script>
+		//$(document).ready(function(){			
+		//	alert('jquery loaded');			
+		//});
+		
+		//$("#test1").click(alert('Clicked'));
+		//document.write('From the document writer');
+		
+		//document.addEventListener("DOMContentLoaded", function(){
+			
+			//tester();
+			//document.write('From the document writer');
+		//});
+		var sandySprings=new google.maps.LatLng(33.935101, -84.360924);
+		var alpharetta=new google.maps.LatLng(34.075376, -84.294090);
+		var marietta=new google.maps.LatLng(33.952602, -84.549933);
+		var myTrip = [sandySprings, alpharetta,marietta];
+		
+		function initialize(){
+			var mapProp = {
+				center: sandySprings,
+				zoom: 10,
+				mapTypeId: google.maps.MapTypeId.ROADMAP  //map types, ROADMAP, SATELLITE, HYBRID, TERRAIN
+			};
+			var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+			var ssMarker = new google.maps.Marker({
+				position:sandySprings,
+				animation:google.maps.Animation.DROP
+			});
+			var alphMarker = new google.maps.Marker({
+				position:alpharetta,
+				animation:google.maps.Animation.DROP,
+				icon: 'http://www.google.com/mapfiles/arrow.png'
+			});
+			var marMarker = new google.maps.Marker({
+				position:marietta,
+				animation:google.maps.Animation.BOUNCE,
+				draggable:true,
+				title:"Drag me!"
+			});
+			var roadTrip = new google.maps.Polyline({
+				path:myTrip,
+				strokeColor:"#0000FF",
+				strokeOpacity:0.8,
+				strokeWeight:2
+			});
+			roadTrip.setMap(map);
+			ssMarker.setMap(map);
+			//ssMarker.addListener('click', function(){alert("HELP ME!!!");});
+			google.maps.event.addListener(ssMarker,'click',function(){
+				map.setZoom(9);
+				map.setCenter(ssMarker.getPosition());
+			});
+			google.maps.event.addListener(marMarker,'dragend',function(){
+				alert('Moved to '+marMarker.getPosition());
+			});
+			alphMarker.setMap(map);
+			marMarker.setMap(map);
+		}
+		google.maps.event.addDomListener(window, 'load', initialize);
+		
+		function showPageAfterLoading(){
+			myVar = setTimeout(function(){
+				$("#loader").css("display","none");
+				$("#myMainDiv").css("display","block");
+				initialize();
+			},1000);
+		}
+		
+		function move(){
+			var elem = document.getElementById("myBar");
+			var width = 0;
+			var id = setInterval(frame, 1000);
+			//console.log('Will show progress...');
+			//setTimeout(function(){alert("Now popping up...");},5000);
+			//clearTimeout();
+			var counter = 0;
+			//setInterval(function(){
+			//	while(counter < 5){
+			///		alert("Now popping up...");
+			//		counter++;
+			//	}},5000);
+			//clearInterval(setInt);
+			function frame(){
+				if(width >= 100){
+					clearInterval(id);
+				} else {
+					width+=10;
+					elem.style.width = width + '%';
+					console.log('New width: '+width);
+				}
+			}
+		}
+		
+		function move2(){
+			var progressbar = $("#progressbar"),max = progressbar.attr('max'),value = progressbar.val(),time = (1000/max)*5;
+			var loading = function(){
+				value+=5;
+				progressbar.val(value);
+				
+				$('.progress-value').html(value + '%');
+				
+				if (value == max) {
+					clearInterval(animate);                    
+				}
+			};
+			var animate = setInterval(function(){
+				loading();
+			}, time);
+		}
+		//create new object
+		function checkTypeOf(){
+			var test1 = 123;
+			alert("type is: "+ typeof test1);
+			alert("constructor is: "+ test1.constructor.toString());
+		}
+		
+		function tester(){
+			//var car1 = 'Fiat';
+			//var car2 = {name:"Toyota",color:"silver",trans:"auto"};
+			function Car(){}
+			Car.prototype.condition = "new";
+			var myCar = new Car();
+			myCar.color = "silver";
+			//console.log('car color is: '+myCar.color);
+			//console.log('car condition is: '+myCar.condition);
+			console.log("constructor: "+myCar.constructor);
+			
+			//car2.start = checkTypeOf;			
+			//alert('car2: '+ car2[13].writable);
+			//alert("name" in car2); //should return true
+			//alert(car2.hasOwnProperty("toString"));  //should return false
+			//for (var i in myCar){
+			//	console.log(i);
+			//}
+			//console.log(delete myCar.condition);
+			//var serialized = JSON.stringify(myCar);
+			//console.log('Serializing...'+ serialized);
+			//console.log('Deserializing...'+JSON.parse(serialized));		
+
+			//var points = [40, 100, 1, 5, 25, 10];
+			//points.sort(function(a, b){return b-a});  //sort desc
+			//console.log('Points: '+points);
+			
+			try {
+				adjdjgf();
+			} catch (err){
+				console.log('ERR is: '+err.message);
+			}
+			
+		}
+		
+	</script>
+ 
+    <body onload="showPageAfterLoading();">
+		<div id="loader"></div>
+		<div id="myMainDiv" style="display:none" class="animate-bottom">
+			<progress id="progressbar" value="10" max="100"><span class="progress-value">0</span>%			
+			</progress>
+			<div class="progress-value">10%</div>
+			
+			
+			<div id="myProgress">
+			<div id="myBar">
+				<div id="tracker">10%</div>
+				<div><button onclick="move();">Show Progress</button></div>
+			</div>
+			</div>
+			
+			<div id="googleMap" style="width:500px;height:380px;">
+			</div>
+			
+			<div>
+      <label>Name:</label>
+      <input type="text" ng-model="yourName" placeholder="Enter a name here">
+      <hr>
+      <h1>Hello {{yourName}}!</h1>
+    </div>
+		</div>
+		
+        
+    </body>
+    
+    
+</html>
