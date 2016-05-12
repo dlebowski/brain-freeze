@@ -10,3 +10,5 @@ http://javascriptissexy.com/16-javascript-concepts-you-must-know-well/
 
 My next line of attack is : Codewars.com
 and adding a new line
+
+adding a new line to test the reset command
